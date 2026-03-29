@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=69.0"]
+requires = ["setuptools>=69.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -9,23 +9,31 @@ description = "HTTP API for Real-ESRGAN"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-  "annotated-doc==0.0.4",
-  "annotated-types==0.7.0",
-  "anyio==4.13.0",
-  "click==8.3.1",
-  "fastapi==0.135.2",
-  "h11==0.16.0",
-  "idna==3.11",
-  "pydantic==2.12.5",
-  "pydantic_core==2.41.5",
-  "starlette==1.0.0",
-  "typing-inspection==0.4.2",
-  "typing_extensions==4.15.0",
-  "uvicorn==0.42.0",
+  annotated-doc==0.0.4
+  annotated-types==0.7.0
+  anyio==4.13.0
+  certifi==2026.2.25
+  charset-normalizer==3.4.6
+  click==8.3.1
+  fastapi==0.135.2
+  h11==0.16.0
+  idna==3.11
+  pydantic==2.12.5
+  pydantic_core==2.41.5
+  requests==2.33.0
+  starlette==1.0.0
+  typing-inspection==0.4.2
+  typing_extensions==4.15.0
+  urllib3==2.6.3
+  uvicorn==0.42.0
 ]
 
 [project.scripts]
 realesrgan-http-api = "realesrgan_http_api.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["realesrgan_http_api*"]
 
 [tool.pytest.ini_options]
 addopts = "-q"
