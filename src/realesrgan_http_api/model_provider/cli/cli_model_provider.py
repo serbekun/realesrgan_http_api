@@ -13,16 +13,17 @@ class CliModelProvider(ModelProvider):
         self.cli_command_name = cli_command_name
         self.temp_files_folder = temp_files_folder
         self.logger = logging.getLogger(__name__)
+        os.makedirs(self.temp_files_folder, exist_ok=True)
 
 
-    async def upscale_image(self, image_bytes: bytes, scale: int = 4, model: str = "realesrgan-x4plus") -> bytes:
+    async def upscale_image(self, image_bytes: bytes, model: str = "realesrgan-x4plus", scale: int = 4, tile_size: int = 512) -> bytes:
         """Make upscaled image use cli tool"""
 
         # save input data to file
         image_id: str = uuid4().hex
 
-        input_path = f"{self.temp_files_folder}/input_image_{image_id}"
-        output_path = f"{self.temp_files_folder}/out_put_image_{image_id}"
+        input_path = os.path.join(self.temp_files_folder, f"input_image_{image_id}.png")
+        output_path = os.path.join(self.temp_files_folder, f"output_image_{image_id}.png")
         
         self.logger.info(f"Starting upscaling: model={model}, scale={scale}, id={image_id}")
 
@@ -32,7 +33,7 @@ class CliModelProvider(ModelProvider):
                 f.write(image_bytes)
             
             # calling CLI
-            await self._call_cli(input_path, output_path, model)
+            await self._call_cli(input_path, output_path, model, scale, tile_size)
             
             self.logger.info(f"Upscaling completed successfully for id={image_id}")
 
@@ -71,11 +72,10 @@ class CliModelProvider(ModelProvider):
                 "-o", output_path,
                 "-n", model,
                 "-s", str(scale),
-                "-t", "4",
             ]
 
             if tile_size:
-                cmd.extend(["--tile", str(tile_size)])
+                cmd.extend(["-t", str(tile_size)])
 
             self.logger.debug(f"Running CLI command: {' '.join(cmd)}")
 
